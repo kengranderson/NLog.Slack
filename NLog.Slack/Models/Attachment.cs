@@ -40,9 +40,9 @@ namespace NLog.Slack.Models
 
         public Attachment(string text)
         {
-            this.Fallback = text;
-            this.Fields = new List<Field>();
-            this.MarkdownIn = new List<string> { "fields" };
+            Fallback = text;
+            Fields = new List<Field>();
+            MarkdownIn = new List<string> { "fields" };
         }
 
         //// ----------------------------------------------------------------------------------------------------------

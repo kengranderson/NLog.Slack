@@ -1,5 +1,4 @@
-﻿using System;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 
 namespace NLog.Slack.Models
 {
@@ -22,7 +21,7 @@ namespace NLog.Slack.Models
         {
             get
             {
-                return !Ok || String.IsNullOrWhiteSpace(this.Error);
+                return !Ok || string.IsNullOrWhiteSpace(this.Error);
             }
         }
 

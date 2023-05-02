@@ -1,10 +1,11 @@
-﻿using System;
+﻿using NLog.Web;
+using System;
 
 namespace NLog.Slack.Demo
 {
     public static class Program
     {
-        private static Logger _logger = LogManager.GetCurrentClassLogger();
+        static Logger _logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
 
         public static void Main(string[] args)
         {
@@ -25,7 +26,7 @@ namespace NLog.Slack.Demo
             Console.ReadLine();
         }
 
-        private static void CreateBigStackTrace(int lines)
+        static void CreateBigStackTrace(int lines)
         {
             if (lines < 1)
             {

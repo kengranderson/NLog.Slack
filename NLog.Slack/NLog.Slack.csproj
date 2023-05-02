@@ -1,31 +1,30 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
+    <TargetFramework>net6.0</TargetFramework>
 
     <Title>NLog.Slack</Title>
-    <Description>NLog target for Slack - your logs in one place and instantly searchable, everywhere.</Description>
-    <Authors>Paul Price</Authors>
-    <Company>darkport</Company>
+    <Description>.Net 6.0 NLog target for Slack - your logs in one place and instantly searchable, everywhere.</Description>
+    <Authors>Paul Price, .Net 6.0 update by Ken Granderson</Authors>
+    <Company>darkport and BlackFacts.com</Company>
     <CurrentYear>$([System.DateTime]::Now.ToString(yyyy))</CurrentYear>
-    <Copyright>Copyright (c) 2014-$(CurrentYear) - Paul Price</Copyright>
+    <Copyright>Copyright (c) 2014-2019 - Paul Price, 2023-$(CurrentYear) Ken Granderson</Copyright>
 
     <PackageTags>NLog;slack;log;logging</PackageTags>
-    <PackageProjectUrl>https://github.com/eth0izzle/NLog.Slack</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/eth0izzle/NLog.Slack/blob/master/LICENSE.md</PackageLicenseUrl>
-    <PackageIconUrl>https://raw.githubusercontent.com/eth0izzle/NLog.Slack/master/nuget.png</PackageIconUrl>
+    <PackageProjectUrl>https://github.com/kengranderson/NLog.Slack</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/kengranderson/NLog.Slack/blob/master/LICENSE.md</PackageLicenseUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/kengranderson/NLog.Slack/master/nuget.png</PackageIconUrl>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/eth0izzle/NLog.Slack.git</RepositoryUrl>
+    <RepositoryUrl>https://github.com/kengranderson/NLog.Slack.git</RepositoryUrl>
 
-    <Version>1.0.5.0</Version>
-
-    <AssemblyVersion>1.0.5.0</AssemblyVersion>
+    <Version>2.0.0.0</Version>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
 
     <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NLog" Version="4.5.11" />
+    <PackageReference Include="NLog" Version="5.1.4" />
   </ItemGroup>
 
 </Project>

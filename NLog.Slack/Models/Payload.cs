@@ -16,7 +16,7 @@ namespace NLog.Slack.Models
 
         public Payload()
         {
-            this.Attachments = new List<Attachment>();
+            Attachments = new List<Attachment>();
         }
 
         public string ToJson()

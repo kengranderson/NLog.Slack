@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Net;
+using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace NLog.Slack
 {
@@ -8,27 +9,26 @@ namespace NLog.Slack
     {
         public event Action<Exception> Error;
 
-        public void Send(string url, string data)
+        public async Task SendAsync(string url, string data)
         {
             try
             {
-                using (var client = new WebClient())
+                using (var client = new HttpClient())
                 {
-                    client.Headers[HttpRequestHeader.ContentType] = "application/json";
-                    client.Encoding = Encoding.UTF8;
-                    client.UploadString(url, "POST", data);
+                    client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/json");
+                    await client.PostAsync(url, new StringContent(data, Encoding.UTF8, "application/json"));
                 }
             }
             catch (Exception e)
             {
-                this.OnError(e);
+                OnError(e);
             }
         }
 
-        private void OnError(Exception obj)
+        void OnError(Exception obj)
         {
-            if (this.Error != null)
-                this.Error(obj);
+            if (Error != null)
+                Error(obj);
         }
     }
 }

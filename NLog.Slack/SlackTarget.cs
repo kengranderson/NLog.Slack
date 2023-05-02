@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using NLog.Common;
 using NLog.Config;
 using NLog.Slack.Models;
@@ -22,17 +23,18 @@ namespace NLog.Slack
 
         protected override void InitializeTarget()
         {
-            if (String.IsNullOrWhiteSpace(this.WebHookUrl))
+            if (string.IsNullOrWhiteSpace(WebHookUrl))
                 throw new ArgumentOutOfRangeException("WebHookUrl", "Webhook URL cannot be empty.");
 
             Uri uriResult;
-            if (!Uri.TryCreate(this.WebHookUrl, UriKind.Absolute, out uriResult))
+            if (!Uri.TryCreate(WebHookUrl, UriKind.Absolute, out uriResult))
                 throw new ArgumentOutOfRangeException("WebHookUrl", "Webhook URL is an invalid URL.");
 
-            if (!this.Compact && this.ContextProperties.Count == 0)
+            if (!Compact && ContextProperties.Count == 0)
             {
-                this.ContextProperties.Add(new TargetPropertyWithContext("Process Name", Layout = "${machinename}\\${processname}"));
-                this.ContextProperties.Add(new TargetPropertyWithContext("Process PID", Layout = "${processid}"));
+                ContextProperties.Add(new TargetPropertyWithContext("Process Name", Layout = "${machinename}\\${processname}"));
+                //ContextProperties.Add(new TargetPropertyWithContext("Process PID", Layout = "${processid}"));
+                ContextProperties.Add(new TargetPropertyWithContext("Message", Layout = "${message}"));
             }
 
             base.InitializeTarget();
@@ -42,7 +44,7 @@ namespace NLog.Slack
         {
             try
             {
-                this.SendToSlack(info);
+                SendToSlack(info);
                 info.Continuation(null);
             }
             catch (Exception e)
@@ -51,20 +53,20 @@ namespace NLog.Slack
             }
         }
 
-        private void SendToSlack(AsyncLogEventInfo info)
+        void SendToSlack(AsyncLogEventInfo info)
         {
             var message = RenderLogEvent(Layout, info.LogEvent);
 
             var slack = SlackMessageBuilder
-                .Build(this.WebHookUrl)
+                .Build(WebHookUrl)
                 .OnError(e => info.Continuation(e))
                 .WithMessage(message);
 
-            if (this.ShouldIncludeProperties(info.LogEvent) || this.ContextProperties.Count > 0)
+            if (ShouldIncludeProperties(info.LogEvent) || ContextProperties.Count > 0)
             {
-                var color = this.GetSlackColorFromLogLevel(info.LogEvent.Level);
-                Attachment attachment = new Attachment(info.LogEvent.Message) { Color = color };
-                var allProperties = this.GetAllProperties(info.LogEvent);
+                var color = GetSlackColorFromLogLevel(info.LogEvent.Level);
+                Attachment attachment = new(info.LogEvent.Message) { Color = color };
+                var allProperties = GetAllProperties(info.LogEvent);
                 foreach (var property in allProperties)
                 {
                     if (string.IsNullOrEmpty(property.Key))
@@ -81,22 +83,22 @@ namespace NLog.Slack
             }
       
             var exception = info.LogEvent.Exception;
-            if (!this.Compact && exception != null)
+            if (!Compact && exception != null)
             {
-                var color = this.GetSlackColorFromLogLevel(info.LogEvent.Level);
+                var color = GetSlackColorFromLogLevel(info.LogEvent.Level);
                 var exceptionAttachment = new Attachment(exception.Message) { Color = color };
                 exceptionAttachment.Fields.Add(new Field("StackTrace") {
-                    Title = $"Type: {exception.GetType().ToString()}",
+                    Title = $"Type: {exception.GetType()}",
                     Value = exception.StackTrace ?? "N/A"
                 });
 
                 slack.AddAttachment(exceptionAttachment);
             }
 
-            slack.Send();
+            Task.Run(async () => await slack.SendAsync().ConfigureAwait(false));
         }
 
-        private string GetSlackColorFromLogLevel(LogLevel level)
+        static string GetSlackColorFromLogLevel(LogLevel level)
         {
             if (LogLevelSlackColorMap.TryGetValue(level, out var color))
                 return color;
@@ -104,7 +106,7 @@ namespace NLog.Slack
                 return "#cccccc";
         }
 
-        private static readonly Dictionary<LogLevel, string> LogLevelSlackColorMap = new Dictionary<LogLevel, string>()
+        static readonly Dictionary<LogLevel, string> LogLevelSlackColorMap = new Dictionary<LogLevel, string>()
         {
             { LogLevel.Warn, "warning" },
             { LogLevel.Error, "danger" },

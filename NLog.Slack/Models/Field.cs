@@ -24,7 +24,7 @@ namespace NLog.Slack.Models
 
         public Field(string title)
         {
-            this.Title = title;
+            Title = title;
         }
 
         //// ----------------------------------------------------------------------------------------------------------
